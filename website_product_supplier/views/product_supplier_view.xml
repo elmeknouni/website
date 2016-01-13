@@ -2,10 +2,39 @@
 <openerp>
 <data noupdate="0">
 
+<template id="product_supplier_breadcrumb" name="Product Supplier Breadcrumb">
+    <div class="row">
+        <div class="col-md-6">
+            <ol id="supplier_breadcrumb" class="breadcrumb">
+                <li><a href="/my/home">Home</a></li>
+                <li t-if="main_obj">
+                    <a href="/my/supplier/product/list_only">
+                        My Products</a>
+                </li>
+                <li>
+                    <span t-esc="supplierinfo.get('product_name', False) or 'New product'"/>
+                </li>
+            </ol>
+        </div>
+    </div>
+</template>
+
 <!-- Product view for create and edit -->
 <template id="product" name="Supplier Product">
     <t t-call="website.layout">
-        <div class="container mt8">
+        <div class="container">
+            <div class="row">
+                <div id="product_title" class="col-md-12">
+                    <h1 t-if="main_obj">Edit Product</h1>
+                    <h1 t-if="not main_obj">Add Product</h1>
+                </div>
+            </div>
+            <t t-call="website_product_supplier.product_supplier_breadcrumb"/>
+            <div id="product_help" class="row mb8">
+                <div id="add_product_help" t-if="not main_obj" class="col-md-12">
+                    <p>Add your product. You can update later in this section <a href="/my/supplier/product/list_only">My Products</a>.</p>
+                </div>
+            </div>
             <div class="row">
                 <div class="col-md-12">
                     <!-- Show error information -->
@@ -17,35 +46,56 @@
                           method="post" enctype="multipart/form-data">
                         <div class="panel panel-default">
                             <div class="panel-heading">
-                                <h3 class="panel-title"><span t-esc="supplierinfo.get('product_name','New product')"/></h3>
+                                <h3 class="panel-title"><span t-esc="supplierinfo.get('product_name', False) or 'New product'"/></h3>
                             </div>
                             <div class="panel-body">
-                                <div class="row">
-                                    <div id="product_image" class="col-md-4">
-                                        <span t-field="product.image"
-                                              t-field-options='{"widget": "image", "class": "product_detail_img", "alt-field": "name"}'
-                                              class="oe_form_field_image_controls"/>
-                                        <div class="text-center">
-                                            <label class="custom-file-input">
-                                                <div class="btn btn-default">Load Picture</div>
-                                                <input class="input-file" id="fileInput" type="file" name="ufile"/>
-                                            </label>
+                                <hr/>
+                                <section id="general_data">
+                                    <div class="row">
+                                        <div class="col-md-12 mb16">
+                                            <h2><span class="number-circle">1</span> General Data</h2>
                                         </div>
                                     </div>
-                                    <div id="product_fields" class="col-md-8">
-                                        <section id="product_fields_base">
-                                            <div id="product_name" class="row">
-                                                <div t-attf-class="col-md-8 form-group #{error.get('product_name') and 'has-error' or ''}">
-                                                    <label class="control-label">Name</label>
-                                                        <input id="product_name" class="form-control" name="product_name" placeholder="Product name..."
-                                                               t-att-value="supplierinfo.get('product_name')"/>
-                                                </div>
-                                                <div t-attf-class="col-md-4 form-group #{error.get('product_code') and 'has-error' or ''}">
-                                                    <label class="control-label">Code</label>
-                                                        <input id="product_code" class="form-control" name="product_code" placeholder="Product Code..."
-                                                               t-att-value="supplierinfo.get('product_code')"/>
-                                                </div>
+                                    <div class="row">
+                                        <div id="product_image" class="col-md-4">
+                                            <span t-field="product.image"
+                                                  t-field-options='{"widget": "image", "class": "product_detail_img", "alt-field": "name"}'
+                                                  class="oe_form_field_image_controls"/>
+                                            <div class="text-center">
+                                                <label class="custom-file-input">
+                                                    <div class="btn btn-default">Load Picture</div>
+                                                    <input class="input-file" id="fileInput" type="file" name="ufile"/>
+                                                </label>
                                             </div>
+                                        </div>
+                                        <div id="product_fields" class="col-md-8">
+                                            <section id="product_fields_base">
+                                                <div id="product_name" class="row">
+                                                    <div t-attf-class="col-md-8 form-group #{error.get('product_name') and 'has-error' or ''}">
+                                                        <label class="control-label">Name</label>
+                                                            <input id="product_name" class="form-control" name="product_name" placeholder="Product name..."
+                                                                   t-att-value="supplierinfo.get('product_name')"/>
+                                                    </div>
+                                                    <div t-attf-class="col-md-4 form-group #{error.get('product_code') and 'has-error' or ''}">
+                                                        <label class="control-label">Code</label>
+                                                            <input id="product_code" class="form-control" name="product_code" placeholder="Product Code..."
+                                                                   t-att-value="supplierinfo.get('product_code')"/>
+                                                    </div>
+                                                </div>
+                                            </section>
+                                        </div>
+                                    </div>
+                                </section>
+                                <hr/>
+                                <section id="price_stock">
+                                    <div class="row">
+                                        <div class="col-md-12 mb16">
+                                            <h2><span class="number-circle">2</span> Price and stock</h2>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4"/>
+                                        <div class="col-md-8">
                                             <div id="supplier_info" class="row">
                                                 <div t-attf-class="col-md-4 form-group #{error.get('min_qty') and 'has-error' or ''}">
                                                     <label class="control-label">Min Quantity</label>
@@ -78,9 +128,9 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </section>
+                                        </div>
                                     </div>
-                                </div>
+                                </section>
                             </div>
                         </div>
                         <div class="form-group">
